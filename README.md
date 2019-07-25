@@ -3,6 +3,8 @@ Python library for accessing SMHI open forecast data
 
 Please visit http://opendata.smhi.se/apidocs/metfcst/parameters.html for more information
 
+If you want to contribute you can use devcontainers in vscode for easiest setup. Please see [instructions here](.devcontainer/README.md)
+
 
 If you like what I do and want to buy me a cup of coffee. It is always appreciated :)
 
