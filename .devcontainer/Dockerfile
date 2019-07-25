@@ -5,7 +5,7 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python -m pip install --upgrade colorlog black pylint pytest aiohttp pytest-asyncio twine
+RUN python -m pip install --upgrade colorlog black pylint pytest pytest-cov aiohttp pytest-asyncio twine
 WORKDIR /workspace
 
 # Set the default shell to bash instead of sh

@@ -37,6 +37,9 @@ _Start "tasks" by opening the the command pallet (ctrl+shift+p) and select `Task
 
 Will run pypi tests on all tests in the workspace
 
+### Run tests with coverege
+Will run pypi tests on all tests in the workspace with code coverege on
+
 ### Make package
 
 Builds the package of the current version stated in the Setup.py file
