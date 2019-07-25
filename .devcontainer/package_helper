@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+function BuildPackage {
+  echo "Building package..."
+  cd /workspaces/pypi_smhi
+  python smhi/setup.py sdist
+  echo "Package built!"
+}
+
+function UploadPackage {
+  echo "Building package..."
+  twine upload /workspaces/pypi_smhi/dist/*
+  echo "Package built!"
+}
