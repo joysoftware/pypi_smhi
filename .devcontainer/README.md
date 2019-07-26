@@ -47,3 +47,8 @@ Builds the package of the current version stated in the Setup.py file
 ### Upload package to pypi
 
 Uploads all built packages to pypi, please provide credentials in terminal window
+
+### Install TabNine
+
+Installs TabNine config, requires a valid cloud API key to work
+
