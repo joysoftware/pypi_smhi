@@ -280,7 +280,7 @@ class Smhi:
 
 # pylint: disable=R0914, R0912, W0212, R0915
 def _get_forecast(api_result: dict) -> List[SmhiForecast]:
-    """Converts results fråm API to SmhiForeCast list"""
+    """Converts results from API to SmhiForeCast list"""
     forecasts = []
 
     # Need the ordered dict to get
@@ -303,17 +303,17 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
         forecast_temp_max = -100.0
         forecast_temp_min = 100.0
         forecast = None
-        for forcast_day in forecasts_day:
-            temperature = forcast_day.temperature
+        for forecast_day in forecasts_day:
+            temperature = forecast_day.temperature
             if forecast_temp_min > temperature:
                 forecast_temp_min = temperature
             if forecast_temp_max < temperature:
                 forecast_temp_max = temperature
 
-            if forcast_day.valid_time.hour == 12:
-                forecast = copy.deepcopy(forcast_day)
+            if forecast_day.valid_time.hour == 12:
+                forecast = copy.deepcopy(forecast_day)
 
-            total_precipitation = total_precipitation + forcast_day._total_precipitation
+            total_precipitation = total_precipitation + forecast_day._total_precipitation
 
         if forecast is None:
             # We passed 12 noon, set to current
@@ -333,7 +333,7 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
 
 
 def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
-    """Converts results fråm API to SmhiForeCast list"""
+    """Converts results from API to SmhiForeCast list"""
     # Total time in hours since last forecast
     total_hours_last_forecast = 1.0
 
