@@ -303,6 +303,7 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
         forecast_temp_max = -100.0
         forecast_temp_min = 100.0
         forecast = None
+        acc_wind_speed = 0
         for forecast_day in forecasts_day:
             temperature = forecast_day.temperature
             if forecast_temp_min > temperature:
@@ -315,6 +316,8 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
 
             total_precipitation = total_precipitation + forecast_day._total_precipitation
 
+            acc_wind_speed += forecast_day.wind_speed
+
         if forecast is None:
             # We passed 12 noon, set to current
             forecast = forecasts_day[0]
@@ -323,6 +326,7 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
         forecast._temperature_min = forecast_temp_min
         forecast._total_precipitation = total_precipitation
         forecast._mean_precipitation = total_precipitation / 24
+        forecast._wind_speed = acc_wind_speed / len(forecasts_day)
         forecasts.append(forecast)
         day_nr = day_nr + 1
 
