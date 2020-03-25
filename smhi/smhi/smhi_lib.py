@@ -42,7 +42,7 @@ class SmhiForecast:
         cloudiness: int,
         precipitation: int,
         wind_direction: int,
-        wind_speed: float,
+        mean_wind_speed: float,
         horizontal_visibility: float,
         wind_gust: float,
         mean_precipitation: float,
@@ -61,7 +61,7 @@ class SmhiForecast:
         self._precipitation = precipitation
         self._mean_precipitation = mean_precipitation
         self._total_precipitation = total_precipitation
-        self._wind_speed = wind_speed
+        self._mean_wind_speed = mean_wind_speed
         self._wind_direction = wind_direction
         self.horizontal_visibility = horizontal_visibility
         self._wind_gust = wind_gust
@@ -104,9 +104,9 @@ class SmhiForecast:
         return self._cloudiness
 
     @property
-    def wind_speed(self) -> float:
+    def mean_wind_speed(self) -> float:
         """wind speed (m/s)"""
-        return self._wind_speed
+        return self._mean_wind_speed
 
     @property
     def wind_direction(self) -> int:
@@ -326,7 +326,7 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
         forecast._temperature_min = forecast_temp_min
         forecast._total_precipitation = total_precipitation
         forecast._mean_precipitation = total_precipitation / 24
-        forecast._wind_speed = acc_wind_speed / len(forecasts_day)
+        forecast._mean_wind_speed = acc_wind_speed / len(forecasts_day)
         forecasts.append(forecast)
         day_nr = day_nr + 1
 
