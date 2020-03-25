@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="smhi_pkg",
-    version="1.0.10",
+    version="1.0.13",
     author="helto4real",
     author_email="info@joysoftware.org",
     description="Gets the weather forecast data from Swedish " "weather institute",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/helto4real/pypi_smhi",
+    url="https://github.com/joysoftware/pypi_smhi",
     packages=setuptools.find_packages(exclude=["*test_*", "tests"]),
     classifiers=[
         "Programming Language :: Python :: 3",
