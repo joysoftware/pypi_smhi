@@ -112,7 +112,7 @@ class SmhiForecast:
 
     @property
     def mean_wind_speed(self) -> float:
-        """wind speed (m/s)"""
+        """mean wind speed (m/s)"""
         return self._mean_wind_speed
 
     @property
