@@ -43,6 +43,7 @@ class SmhiForecast:
         precipitation: int,
         wind_direction: int,
         wind_speed: float,
+        mean_wind_speed: float,
         horizontal_visibility: float,
         wind_gust: float,
         mean_precipitation: float,
@@ -62,6 +63,7 @@ class SmhiForecast:
         self._mean_precipitation = mean_precipitation
         self._total_precipitation = total_precipitation
         self._wind_speed = wind_speed
+        self._mean_wind_speed = mean_wind_speed
         self._wind_direction = wind_direction
         self.horizontal_visibility = horizontal_visibility
         self._wind_gust = wind_gust
@@ -107,6 +109,11 @@ class SmhiForecast:
     def wind_speed(self) -> float:
         """wind speed (m/s)"""
         return self._wind_speed
+
+    @property
+    def mean_wind_speed(self) -> float:
+        """wind speed (m/s)"""
+        return self._mean_wind_speed
 
     @property
     def wind_direction(self) -> int:
@@ -303,17 +310,21 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
         forecast_temp_max = -100.0
         forecast_temp_min = 100.0
         forecast = None
-        for forcast_day in forecasts_day:
-            temperature = forcast_day.temperature
+        acc_wind_speed = 0
+        for forecast_day in forecasts_day:
+            temperature = forecast_day.temperature
             if forecast_temp_min > temperature:
                 forecast_temp_min = temperature
             if forecast_temp_max < temperature:
                 forecast_temp_max = temperature
 
-            if forcast_day.valid_time.hour == 12:
-                forecast = copy.deepcopy(forcast_day)
+            if forecast_day.valid_time.hour == 12:
+                forecast = copy.deepcopy(forecast_day)
 
-            total_precipitation = total_precipitation + forcast_day._total_precipitation
+            total_precipitation = (
+                total_precipitation + forecast_day._total_precipitation
+            )
+            acc_wind_speed += forecast_day.wind_speed
 
         if forecast is None:
             # We passed 12 noon, set to current
@@ -323,6 +334,7 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
         forecast._temperature_min = forecast_temp_min
         forecast._total_precipitation = total_precipitation
         forecast._mean_precipitation = total_precipitation / 24
+        forecast._mean_wind_speed = acc_wind_speed / len(forecasts_day)
         forecasts.append(forecast)
         day_nr = day_nr + 1
 
@@ -397,6 +409,7 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
             cloudiness,
             precipitation,
             wind_direction,
+            wind_speed,
             wind_speed,
             horizontal_visibility,
             wind_gust,

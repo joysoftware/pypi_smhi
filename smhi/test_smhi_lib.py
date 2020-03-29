@@ -128,6 +128,11 @@ def test_wind_speed(first_smhi_forecast):
     assert first_smhi_forecast.wind_speed == 1.9
 
 
+def test_mean_wind_speed(first_smhi_forecast):
+    """test"""
+    assert first_smhi_forecast.mean_wind_speed == 0.7333333333333334
+
+
 def test_wind_direction(first_smhi_forecast):
     """test"""
     assert first_smhi_forecast.wind_direction == 134
