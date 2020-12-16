@@ -9,8 +9,7 @@
 		"GIT_EDTIOR='code --wait'"
 	],
 	"extensions": [
-		"ms-python.python",
-		"tabnine.tabnine-vscode"
+		"ms-python.python"
 	],
 	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",

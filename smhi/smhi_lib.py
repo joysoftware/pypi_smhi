@@ -227,17 +227,25 @@ class SmhiAPI(SmhiAPIBase):
         """gets data from API asyncronious"""
         api_url = APIURL_TEMPLATE.format(longitude, latitude)
 
+        is_new_session = False
         if self.session is None:
             self.session = aiohttp.ClientSession()
+            is_new_session = True
+
 
         async with self.session.get(api_url) as response:
             if response.status != 200:
+                if is_new_session:
+                    await self.session.close()
                 raise SmhiForecastException(
                     "Failed to access weather API with status code {}".format(
                         response.status
                     )
                 )
             data = await response.text()
+            if is_new_session:
+               await self.session.close()
+
             return json.loads(data)
 
 
