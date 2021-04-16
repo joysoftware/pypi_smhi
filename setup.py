@@ -9,6 +9,7 @@ setuptools.setup(
     author="helto4real",
     author_email="info@joysoftware.org",
     description="Gets the weather forecast data from Swedish " "weather institute",
+    license="MIT",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/joysoftware/pypi_smhi",
