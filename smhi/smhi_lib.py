@@ -33,9 +33,9 @@ class SmhiForecast:
     # pylint: disable=R0913, R0902, R0914
     def __init__(
         self,
-        temperature: int,
-        temperature_max: int,
-        temperature_min: int,
+        temperature: float,
+        temperature_max: float,
+        temperature_min: float,
         humidity: int,
         pressure: int,
         thunder: int,
@@ -69,17 +69,17 @@ class SmhiForecast:
         self._valid_time = valid_time
 
     @property
-    def temperature(self) -> int:
+    def temperature(self) -> float:
         """Air temperature (Celcius)"""
         return self._temperature
 
     @property
-    def temperature_max(self) -> int:
+    def temperature_max(self) -> float:
         """Air temperature max during the day (Celcius)"""
         return self._temperature_max
 
     @property
-    def temperature_min(self) -> int:
+    def temperature_min(self) -> float:
         """Air temperature min during the day (Celcius)"""
         return self._temperature_min
 
@@ -386,7 +386,7 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
             elif param["name"] == "gust":
                 wind_gust = float(param["values"][0])  # wind gust speed
 
-        roundedTemp = int(round(temperature))
+        roundedTemp = round(temperature, 1)
 
         if last_time is not None:
             total_hours_last_forecast = (valid_time - last_time).seconds / 60 / 60
