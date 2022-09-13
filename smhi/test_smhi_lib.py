@@ -38,6 +38,10 @@ def smhi_forecasts(smhi) -> List[SmhiForecast]:
     """Returns the smhi object."""
     return smhi.get_forecast()
 
+@pytest.fixture
+def smhi_forecasts_hour(smhi) -> List[SmhiForecast]:
+    """Returns the smhi object."""
+    return smhi.get_forecast_hour()
 
 @pytest.fixture
 def first_smhi_forecast(smhi) -> SmhiForecast:
@@ -50,6 +54,10 @@ def first_smhi_forecast2(smhi) -> SmhiForecast:
     """Returns the smhi object."""
     return smhi.get_forecast()[2]
 
+@pytest.fixture
+def first_smhi_forecast_hour(smhi) -> SmhiForecast:
+    """Returns the smhi object."""
+    return smhi.get_forecast_hour()[1]
 
 @pytest.mark.asyncio
 async def test_provide_session_constructor() -> None:
@@ -71,6 +79,16 @@ def test_max_six_digits_round() -> None:
 def test_nr_of_items(smhi_forecasts) -> None:
     """Tests the number of items returned matches the inputdata."""
     assert len(smhi_forecasts) == 12
+
+
+def test_nr_of_items_hour(smhi_forecasts_hour) -> None:
+    """Tests the number of items returned matches the inputdata."""
+    assert len(smhi_forecasts_hour) == 71
+
+
+def test_temperature_hour(first_smhi_forecast_hour):
+    """test"""
+    assert first_smhi_forecast_hour.temperature == 16
 
 
 def test_temperature(first_smhi_forecast):
