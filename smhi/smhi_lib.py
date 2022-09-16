@@ -244,7 +244,7 @@ class SmhiAPI(SmhiAPIBase):
                 )
             data = await response.text()
             if is_new_session:
-               await self.session.close()
+                await self.session.close()
 
             return json.loads(data)
 
@@ -276,6 +276,13 @@ class Smhi:
         json_data = self._api.get_forecast_api(self._longitude, self._latitude)
         return _get_forecast(json_data)
 
+    def get_forecast_hour(self) -> List[SmhiForecast]:
+        """
+        Returns a list of forecasts by hour. The first in list are the current one
+        """
+        json_data = self._api.get_forecast_api(self._longitude, self._latitude)
+        return _get_forecast_hour(json_data)
+
     async def async_get_forecast(self) -> List[SmhiForecast]:
         """
         Returns a list of forecasts. The first in list are the current one
@@ -284,6 +291,15 @@ class Smhi:
             self._longitude, self._latitude
         )
         return _get_forecast(json_data)
+
+    async def async_get_forecast_hour(self) -> List[SmhiForecast]:
+        """
+        Returns a list of forecasts by hour. The first in list are the current one
+        """
+        json_data = await self._api.async_get_forecast_api(
+            self._longitude, self._latitude
+        )
+        return _get_forecast_hour(json_data)
 
 
 # pylint: disable=R0914, R0912, W0212, R0915
@@ -336,6 +352,25 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
 
     return forecasts
 
+def _get_forecast_hour(api_result: dict) -> List[SmhiForecast]:
+    """Converts results fråm API to SmhiForeCast list"""
+    forecasts = []
+
+    # Need the ordered dict to get
+    # the days in order in next stage
+    forecasts_ordered = OrderedDict()
+
+    forecasts_ordered = _get_all_forecast_from_api(api_result)
+
+
+    for day in forecasts_ordered:
+        for forecast_hour in forecasts_ordered[day]:
+            forecast = forecast_hour
+            forecast._total_precipitation = forecast._mean_precipitation
+
+            forecasts.append(forecast)
+
+    return forecasts
 
 # pylint: disable=R0914, R0912, W0212, R0915
 
