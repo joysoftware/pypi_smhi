@@ -209,9 +209,9 @@ class SmhiAPIBase:
 class SmhiAPI(SmhiAPIBase):
     """Default implementation for SMHI api"""
 
-    def __init__(self) -> None:
+    def __init__(self, session: aiohttp.ClientSession) -> None:
         """Init the API with or without session"""
-        self.session = None
+        self.session = session if session else None
 
     def get_forecast_api(self, longitude: str, latitude: str) -> {}:
         """gets data from API"""
@@ -249,7 +249,7 @@ class SmhiAPI(SmhiAPIBase):
             return json.loads(data)
 
 
-class Smhi:
+class Smhi(SmhiAPI):
     """
     Class that use the Swedish Weather Institute (SMHI) weather forecast
     open API to return the current forecast data
@@ -260,34 +260,31 @@ class Smhi:
         longitude: str,
         latitude: str,
         session: aiohttp.ClientSession = None,
-        api: SmhiAPIBase = SmhiAPI(),
+        api: SmhiAPIBase = SmhiAPI,
     ) -> None:
         self._longitude = str(round(float(longitude), 6))
         self._latitude = str(round(float(latitude), 6))
-        self._api = api
-
-        if session:
-            self._api.session = session
+        super().__init__(session = session)
 
     def get_forecast(self) -> List[SmhiForecast]:
         """
         Returns a list of forecasts. The first in list are the current one
         """
-        json_data = self._api.get_forecast_api(self._longitude, self._latitude)
+        json_data = self.get_forecast_api(self._longitude, self._latitude)
         return _get_forecast(json_data)
 
     def get_forecast_hour(self) -> List[SmhiForecast]:
         """
         Returns a list of forecasts by hour. The first in list are the current one
         """
-        json_data = self._api.get_forecast_api(self._longitude, self._latitude)
+        json_data = self.get_forecast_api(self._longitude, self._latitude)
         return _get_forecast_hour(json_data)
 
     async def async_get_forecast(self) -> List[SmhiForecast]:
         """
         Returns a list of forecasts. The first in list are the current one
         """
-        json_data = await self._api.async_get_forecast_api(
+        json_data = await self.async_get_forecast_api(
             self._longitude, self._latitude
         )
         return _get_forecast(json_data)
@@ -296,7 +293,7 @@ class Smhi:
         """
         Returns a list of forecasts by hour. The first in list are the current one
         """
-        json_data = await self._api.async_get_forecast_api(
+        json_data = await self.async_get_forecast_api(
             self._longitude, self._latitude
         )
         return _get_forecast_hour(json_data)
