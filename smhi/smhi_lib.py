@@ -4,14 +4,14 @@ the Swedish weather institute (SMHI) through the open
 API:s
 """
 import abc
-import aiohttp
 import copy
 import json
-
 from collections import OrderedDict
 from datetime import datetime
-from urllib.request import urlopen
 from typing import List
+from urllib.request import urlopen
+
+import aiohttp
 
 APIURL_TEMPLATE = (
     "https://opendata-download-metfcst.smhi.se/api/category"
@@ -116,13 +116,13 @@ class SmhiForecast:
     @property
     def precipitation(self) -> int:
         """Precipitation
-            0	No precipitation
-            1	Snow
-            2	Snow and rain
-            3	Rain
-            4	Drizzle
-            5	Freezing rain
-            6	Freezing drizzle
+        0	No precipitation
+        1	Snow
+        2	Snow and rain
+        3	Rain
+        4	Drizzle
+        5	Freezing rain
+        6	Freezing drizzle
         """
         return self._precipitation
 
@@ -144,33 +144,33 @@ class SmhiForecast:
     @property
     def symbol(self) -> int:
         """Symbol (Percent)
-            1	Clear sky
-            2	Nearly clear sky
-            3	Variable cloudiness
-            4	Halfclear sky
-            5	Cloudy sky
-            6	Overcast
-            7	Fog
-            8	Light rain showers
-            9	Moderate rain showers
-            10	Heavy rain showers
-            11	Thunderstorm
-            12	Light sleet showers
-            13	Moderate sleet showers
-            14	Heavy sleet showers
-            15	Light snow showers
-            16	Moderate snow showers
-            17	Heavy snow showers
-            18	Light rain
-            19	Moderate rain
-            20	Heavy rain
-            21	Thunder
-            22	Light sleet
-            23	Moderate sleet
-            24	Heavy sleet
-            25	Light snowfall
-            26	Moderate snowfall
-            27	Heavy snowfall"""
+        1	Clear sky
+        2	Nearly clear sky
+        3	Variable cloudiness
+        4	Halfclear sky
+        5	Cloudy sky
+        6	Overcast
+        7	Fog
+        8	Light rain showers
+        9	Moderate rain showers
+        10	Heavy rain showers
+        11	Thunderstorm
+        12	Light sleet showers
+        13	Moderate sleet showers
+        14	Heavy sleet showers
+        15	Light snow showers
+        16	Moderate snow showers
+        17	Heavy snow showers
+        18	Light rain
+        19	Moderate rain
+        20	Heavy rain
+        21	Thunder
+        22	Light sleet
+        23	Moderate sleet
+        24	Heavy sleet
+        25	Light snowfall
+        26	Moderate snowfall
+        27	Heavy snowfall"""
         return self._symbol
 
     @property
@@ -231,7 +231,6 @@ class SmhiAPI(SmhiAPIBase):
         if self.session is None:
             self.session = aiohttp.ClientSession()
             is_new_session = True
-
 
         async with self.session.get(api_url) as response:
             if response.status != 200:
@@ -352,6 +351,7 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
 
     return forecasts
 
+
 def _get_forecast_hour(api_result: dict) -> List[SmhiForecast]:
     """Converts results fråm API to SmhiForeCast list"""
     forecasts = []
@@ -362,7 +362,6 @@ def _get_forecast_hour(api_result: dict) -> List[SmhiForecast]:
 
     forecasts_ordered = _get_all_forecast_from_api(api_result)
 
-
     for day in forecasts_ordered:
         for forecast_hour in forecasts_ordered[day]:
             forecast = forecast_hour
@@ -371,6 +370,7 @@ def _get_forecast_hour(api_result: dict) -> List[SmhiForecast]:
             forecasts.append(forecast)
 
     return forecasts
+
 
 # pylint: disable=R0914, R0912, W0212, R0915
 
@@ -389,7 +389,6 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
 
     # Get the parameters
     for forecast in api_result["timeSeries"]:
-
         valid_time = datetime.strptime(forecast["validTime"], "%Y-%m-%dT%H:%M:%SZ")
         for param in forecast["parameters"]:
             if param["name"] == "t":

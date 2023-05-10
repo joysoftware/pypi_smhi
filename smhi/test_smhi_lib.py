@@ -3,21 +3,21 @@
 """
 # pylint: disable=C0302,W0621,R0903, W0212
 
+import logging
 from datetime import datetime
 from typing import List
 
 import aiohttp
 import pytest
+
+from smhi import smhi_lib
 from smhi.smhi_lib import (
     Smhi,
-    SmhiForecast,
-    SmhiAPIBase,
     SmhiAPI,
+    SmhiAPIBase,
+    SmhiForecast,
     SmhiForecastException,
 )
-from smhi import smhi_lib
-
-import logging
 
 
 @pytest.fixture
@@ -38,10 +38,12 @@ def smhi_forecasts(smhi) -> List[SmhiForecast]:
     """Returns the smhi object."""
     return smhi.get_forecast()
 
+
 @pytest.fixture
 def smhi_forecasts_hour(smhi) -> List[SmhiForecast]:
     """Returns the smhi object."""
     return smhi.get_forecast_hour()
+
 
 @pytest.fixture
 def first_smhi_forecast(smhi) -> SmhiForecast:
@@ -54,10 +56,12 @@ def first_smhi_forecast2(smhi) -> SmhiForecast:
     """Returns the smhi object."""
     return smhi.get_forecast()[2]
 
+
 @pytest.fixture
 def first_smhi_forecast_hour(smhi) -> SmhiForecast:
     """Returns the smhi object."""
     return smhi.get_forecast_hour()[1]
+
 
 @pytest.mark.asyncio
 async def test_provide_session_constructor() -> None:
