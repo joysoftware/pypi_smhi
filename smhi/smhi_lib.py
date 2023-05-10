@@ -421,19 +421,19 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
             elif param["name"] == "gust":
                 wind_gust = float(param["values"][0])  # wind gust speed
 
-        roundedTemp = int(round(temperature))
+        rounded_temp = int(round(temperature))
 
         if last_time is not None:
             total_hours_last_forecast = (valid_time - last_time).seconds / 60 / 60
 
         # Total precipitation, have to calculate with the nr of
         # hours since last forecast to get correct total value
-        tp = round(mean_precipitation * total_hours_last_forecast, 2)
+        total_precipitation = round(mean_precipitation * total_hours_last_forecast, 2)
 
         forecast = SmhiForecast(
-            roundedTemp,
-            roundedTemp,
-            roundedTemp,
+            rounded_temp,
+            rounded_temp,
+            rounded_temp,
             humidity,
             pressure,
             thunder,
@@ -444,7 +444,7 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
             horizontal_visibility,
             wind_gust,
             round(mean_precipitation, 1),
-            tp,
+            total_precipitation,
             symbol,
             valid_time,
         )
