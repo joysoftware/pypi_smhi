@@ -1,6 +1,6 @@
 """intit.py"""
 
-from smhi.smhi_lib import Smhi, SmhiForecast, SmhiAPIBase
+from smhi.smhi_lib import Smhi, SmhiAPIBase, SmhiForecast
 
 __title__ = "SMHI"
 __version__ = "1.0.16"
