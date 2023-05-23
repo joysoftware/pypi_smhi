@@ -8,7 +8,7 @@ import copy
 import json
 from collections import OrderedDict
 from datetime import datetime
-from typing import List
+from typing import List, Any, Dict
 from urllib.request import urlopen
 
 import aiohttp
@@ -21,8 +21,6 @@ APIURL_TEMPLATE = (
 
 class SmhiForecastException(Exception):
     """Exception thrown if failing to access API"""
-
-    pass
 
 
 class SmhiForecast:
@@ -189,14 +187,16 @@ class SmhiAPIBase:
     """
 
     @abc.abstractmethod
-    def get_forecast_api(self, longitude: str, latitude: str) -> {}:
+    def get_forecast_api(self, longitude: str, latitude: str) -> Dict[str, Any]:
         """Override this"""
         raise NotImplementedError(
             "users must define get_forecast to use this base class"
         )
 
     @abc.abstractmethod
-    async def async_get_forecast_api(self, longitude: str, latitude: str) -> {}:
+    async def async_get_forecast_api(
+        self, longitude: str, latitude: str
+    ) -> Dict[str, Any]:
         """Override this"""
         raise NotImplementedError(
             "users must define get_forecast to use this base class"
@@ -213,7 +213,7 @@ class SmhiAPI(SmhiAPIBase):
         """Init the API with or without session"""
         self.session = None
 
-    def get_forecast_api(self, longitude: str, latitude: str) -> {}:
+    def get_forecast_api(self, longitude: str, latitude: str) -> Dict[str, Any]:
         """gets data from API"""
         api_url = APIURL_TEMPLATE.format(longitude, latitude)
 
@@ -223,7 +223,9 @@ class SmhiAPI(SmhiAPIBase):
 
         return json_data
 
-    async def async_get_forecast_api(self, longitude: str, latitude: str) -> {}:
+    async def async_get_forecast_api(
+        self, longitude: str, latitude: str
+    ) -> Dict[str, Any]:
         """gets data from API asyncronious"""
         api_url = APIURL_TEMPLATE.format(longitude, latitude)
 
@@ -237,9 +239,7 @@ class SmhiAPI(SmhiAPIBase):
                 if is_new_session:
                     await self.session.close()
                 raise SmhiForecastException(
-                    "Failed to access weather API with status code {}".format(
-                        response.status
-                    )
+                    f"Failed to access weather API with status code {response.status}"
                 )
             data = await response.text()
             if is_new_session:

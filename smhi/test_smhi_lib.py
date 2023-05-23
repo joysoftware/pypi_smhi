@@ -5,7 +5,7 @@
 
 import logging
 from datetime import datetime
-from typing import List
+from typing import List, Any, Dict
 
 import aiohttp
 import pytest
@@ -317,11 +317,13 @@ async def test_async_error_from_api():
 class FakeSmhiApi(SmhiAPIBase):
     """Implements fake class to return API data"""
 
-    async def async_get_forecast_api(self, longitude: str, latitude: str) -> {}:
+    async def async_get_forecast_api(
+        self, longitude: str, latitude: str
+    ) -> Dict[str, Any]:
         """Real data from the version code works from"""
         return self.get_forecast_api(longitude, latitude)
 
-    def get_forecast_api(self, longitude: str, latitude: str) -> {}:
+    def get_forecast_api(self, longitude: str, latitude: str) -> Dict[str, Any]:
         """Real data from the version code works from"""
         return {
             "approvedTime": "2018-09-01T14:06:18Z",
