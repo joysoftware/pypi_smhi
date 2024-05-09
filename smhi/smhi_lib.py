@@ -3,6 +3,7 @@ Module smhi_lib contains the code to get forecasts from
 the Swedish weather institute (SMHI) through the open
 API:s
 """
+
 import abc
 import copy
 import json
@@ -389,7 +390,7 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
 
     # Get the parameters
     for forecast in api_result["timeSeries"]:
-        valid_time = datetime.strptime(forecast["validTime"], "%Y-%m-%dT%H:%M:%SZ")
+        valid_time = datetime.strptime(forecast["validTime"], "%Y-%m-%dT%H:%M:%S%z")
         for param in forecast["parameters"]:
             if param["name"] == "t":
                 temperature = float(param["values"][0])  # Celcisus

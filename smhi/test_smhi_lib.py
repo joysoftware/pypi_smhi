@@ -1,10 +1,11 @@
 """
     Automatic tests for the smhi_lib
 """
+
 # pylint: disable=C0302,W0621,R0903, W0212
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Any, Dict
 
 import aiohttp
@@ -172,7 +173,9 @@ def test_symbol(first_smhi_forecast):
 
 def test_valid_time(first_smhi_forecast):
     """test"""
-    assert first_smhi_forecast.valid_time == datetime(2018, 9, 1, 15, 0, 0)
+    assert first_smhi_forecast.valid_time == datetime(
+        2018, 9, 1, 15, 0, 0, tzinfo=timezone.utc
+    )
 
 
 def test_cloudiness_when_inconclusive(first_smhi_forecast2):
