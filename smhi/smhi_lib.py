@@ -32,11 +32,11 @@ class SmhiForecast:
     # pylint: disable=R0913, R0902, R0914
     def __init__(
         self,
-        temperature: int,
-        temperature_max: int,
-        temperature_min: int,
+        temperature: float,
+        temperature_max: float,
+        temperature_min: float,
         humidity: int,
-        pressure: int,
+        pressure: float,
         thunder: int,
         cloudiness: int,
         precipitation: int,
@@ -68,17 +68,17 @@ class SmhiForecast:
         self._valid_time = valid_time
 
     @property
-    def temperature(self) -> int:
+    def temperature(self) -> float:
         """Air temperature (Celcius)"""
         return self._temperature
 
     @property
-    def temperature_max(self) -> int:
+    def temperature_max(self) -> float:
         """Air temperature max during the day (Celcius)"""
         return self._temperature_max
 
     @property
-    def temperature_min(self) -> int:
+    def temperature_min(self) -> float:
         """Air temperature min during the day (Celcius)"""
         return self._temperature_min
 
@@ -88,7 +88,7 @@ class SmhiForecast:
         return self._humidity
 
     @property
-    def pressure(self) -> int:
+    def pressure(self) -> float:
         """Air pressure (hPa)"""
         return self._pressure
 
@@ -397,7 +397,7 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
             elif param["name"] == "r":
                 humidity = int(param["values"][0])  # Percent
             elif param["name"] == "msl":
-                pressure = int(param["values"][0])  # hPa
+                pressure = float(param["values"][0])  # hPa
             elif param["name"] == "tstm":
                 thunder = int(param["values"][0])  # Percent
             elif param["name"] == "tcc_mean":
@@ -421,8 +421,6 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
             elif param["name"] == "gust":
                 wind_gust = float(param["values"][0])  # wind gust speed
 
-        rounded_temp = int(round(temperature))
-
         if last_time is not None:
             total_hours_last_forecast = (valid_time - last_time).seconds / 60 / 60
 
@@ -431,9 +429,9 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
         total_precipitation = round(mean_precipitation * total_hours_last_forecast, 2)
 
         forecast = SmhiForecast(
-            rounded_temp,
-            rounded_temp,
-            rounded_temp,
+            temperature,
+            temperature,
+            temperature,
             humidity,
             pressure,
             thunder,
