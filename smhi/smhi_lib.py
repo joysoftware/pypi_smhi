@@ -210,7 +210,7 @@ class SmhiAPIBase:
 class SmhiAPI(SmhiAPIBase):
     """Default implementation for SMHI api"""
 
-    def __init__(self, session: aiohttp.ClientSession | None) -> None:
+    def __init__(self, session: aiohttp.ClientSession | None = None) -> None:
         """Init the API with or without session"""
         self.session: aiohttp.ClientSession | None = session
 
