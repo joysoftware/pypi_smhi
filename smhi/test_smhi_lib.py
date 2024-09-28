@@ -1,11 +1,11 @@
 """
-Automatic tests for the smhi_lib
+    Automatic tests for the smhi_lib
 """
 
 # pylint: disable=C0302,W0621,R0903, W0212
 
 from datetime import datetime, timezone
-from typing import Any, Dict, List
+from typing import List, Any, Dict
 
 import aiohttp
 import pytest
