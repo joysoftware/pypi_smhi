@@ -4,6 +4,7 @@ Automatic tests for the smhi_lib
 
 # pylint: disable=C0302,W0621,R0903, W0212
 
+import logging
 from datetime import datetime, timezone
 from typing import Any
 
