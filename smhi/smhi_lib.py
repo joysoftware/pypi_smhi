@@ -9,7 +9,7 @@ import copy
 import json
 from collections import OrderedDict
 from datetime import datetime
-from typing import List, Any, Dict
+from typing import Any, Dict, List
 from urllib.request import urlopen
 
 import aiohttp
@@ -210,9 +210,9 @@ class SmhiAPIBase:
 class SmhiAPI(SmhiAPIBase):
     """Default implementation for SMHI api"""
 
-    def __init__(self) -> None:
+    def __init__(self, session: aiohttp.ClientSession | None) -> None:
         """Init the API with or without session"""
-        self.session = None
+        self.session: aiohttp.ClientSession | None = session
 
     def get_forecast_api(self, longitude: str, latitude: str) -> Dict[str, Any]:
         """gets data from API"""
@@ -260,14 +260,10 @@ class Smhi:
         longitude: str,
         latitude: str,
         session: aiohttp.ClientSession = None,
-        api: SmhiAPIBase = SmhiAPI(),
     ) -> None:
         self._longitude = str(round(float(longitude), 6))
         self._latitude = str(round(float(latitude), 6))
-        self._api = api
-
-        if session:
-            self._api.session = session
+        self._api = SmhiAPI(session)
 
     def get_forecast(self) -> List[SmhiForecast]:
         """
