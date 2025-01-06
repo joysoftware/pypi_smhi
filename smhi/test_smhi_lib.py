@@ -1,12 +1,12 @@
 """
-    Automatic tests for the smhi_lib
+Automatic tests for the smhi_lib
 """
 
 # pylint: disable=C0302,W0621,R0903, W0212
 
-import logging
 from datetime import datetime, timezone
-from typing import List, Any, Dict
+from typing import Any
+from unittest.mock import patch
 
 import aiohttp
 import pytest
@@ -24,7 +24,8 @@ from smhi.smhi_lib import (
 @pytest.fixture
 def smhi() -> Smhi:
     """Returns the smhi object."""
-    return Smhi("17.041", "62.34198", api=FakeSmhiApi())
+    with patch("smhi.smhi_lib.SmhiAPI", return_value=FakeSmhiApi()):
+        return Smhi("17.041", "62.34198")
 
 
 @pytest.fixture
@@ -35,13 +36,13 @@ def smhi_real() -> Smhi:
 
 
 @pytest.fixture
-def smhi_forecasts(smhi) -> List[SmhiForecast]:
+def smhi_forecasts(smhi) -> list[SmhiForecast]:
     """Returns the smhi object."""
     return smhi.get_forecast()
 
 
 @pytest.fixture
-def smhi_forecasts_hour(smhi) -> List[SmhiForecast]:
+def smhi_forecasts_hour(smhi) -> list[SmhiForecast]:
     """Returns the smhi object."""
     return smhi.get_forecast_hour()
 
@@ -68,7 +69,7 @@ def first_smhi_forecast_hour(smhi) -> SmhiForecast:
 async def test_provide_session_constructor() -> None:
     """Test the constructor that provides session."""
     session = aiohttp.ClientSession()
-    api = Smhi("1.1234567", "1.9876543", session=session, api=FakeSmhiApi())
+    api = Smhi("1.1234567", "1.9876543", session=session)
 
     await session.close()
     assert api._api.session
@@ -208,8 +209,7 @@ async def test_smhi_async_integration_test():
 @pytest.mark.asyncio
 async def test_smhi_async_integration_test_use_session():
     """Only test that uses the actual service. Make sure service is up if fails"""
-    api = SmhiAPI()
-    api.session = aiohttp.ClientSession()
+    api = SmhiAPI(aiohttp.ClientSession())
     forecast = await api.async_get_forecast_api("17.041326", "62.339859")
     assert forecast is not None
     await api.session.close()
@@ -256,14 +256,13 @@ async def test_async_use_abstract_base_class():
 @pytest.mark.asyncio
 async def test_async_error_from_api():
     """test the async stuff"""
-    api = SmhiAPI()
     # Faulty template
     smhi_lib.APIURL_TEMPLATE = (
         "https://opendata-download-metfcst.smhi.se/api/category"
         "/pmp3g/version/2/geotype/point/lon/{}/lat/{}/dataa.json"
     )
 
-    smhi_error = Smhi("17.00", "62.1", api=api)
+    smhi_error = Smhi("17.00", "62.1")
     with pytest.raises(SmhiForecastException):
         await smhi_error.async_get_forecast()
 
@@ -322,11 +321,11 @@ class FakeSmhiApi(SmhiAPIBase):
 
     async def async_get_forecast_api(
         self, longitude: str, latitude: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Real data from the version code works from"""
         return self.get_forecast_api(longitude, latitude)
 
-    def get_forecast_api(self, longitude: str, latitude: str) -> Dict[str, Any]:
+    def get_forecast_api(self, longitude: str, latitude: str) -> dict[str, Any]:
         """Real data from the version code works from"""
         return {
             "approvedTime": "2018-09-01T14:06:18Z",
