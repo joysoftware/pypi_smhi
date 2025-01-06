@@ -5,7 +5,7 @@ Automatic tests for the smhi_lib
 # pylint: disable=C0302,W0621,R0903, W0212
 
 from datetime import datetime, timezone
-from typing import Any, Dict, List
+from typing import Any
 from unittest.mock import patch
 
 import aiohttp
@@ -36,13 +36,13 @@ def smhi_real() -> Smhi:
 
 
 @pytest.fixture
-def smhi_forecasts(smhi) -> List[SmhiForecast]:
+def smhi_forecasts(smhi) -> list[SmhiForecast]:
     """Returns the smhi object."""
     return smhi.get_forecast()
 
 
 @pytest.fixture
-def smhi_forecasts_hour(smhi) -> List[SmhiForecast]:
+def smhi_forecasts_hour(smhi) -> list[SmhiForecast]:
     """Returns the smhi object."""
     return smhi.get_forecast_hour()
 
@@ -94,7 +94,7 @@ def test_nr_of_items_hour(smhi_forecasts_hour) -> None:
 
 def test_temperature_hour(first_smhi_forecast_hour):
     """test"""
-    assert first_smhi_forecast_hour.temperature == 16
+    assert first_smhi_forecast_hour.temperature == 16.1
 
 
 def test_temperature(first_smhi_forecast):
@@ -109,7 +109,7 @@ def test_temperature_max(first_smhi_forecast):
 
 def test_temperature_min(first_smhi_forecast):
     """test"""
-    assert first_smhi_forecast.temperature_min == 7
+    assert first_smhi_forecast.temperature_min == 6.8
 
 
 def test_humidity(first_smhi_forecast):
@@ -119,7 +119,7 @@ def test_humidity(first_smhi_forecast):
 
 def test_pressure(first_smhi_forecast):
     """test"""
-    assert first_smhi_forecast.pressure == 1024
+    assert first_smhi_forecast.pressure == 1024.6
 
 
 def test_thunder(first_smhi_forecast):
@@ -321,11 +321,11 @@ class FakeSmhiApi(SmhiAPIBase):
 
     async def async_get_forecast_api(
         self, longitude: str, latitude: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Real data from the version code works from"""
         return self.get_forecast_api(longitude, latitude)
 
-    def get_forecast_api(self, longitude: str, latitude: str) -> Dict[str, Any]:
+    def get_forecast_api(self, longitude: str, latitude: str) -> dict[str, Any]:
         """Real data from the version code works from"""
         return {
             "approvedTime": "2018-09-01T14:06:18Z",

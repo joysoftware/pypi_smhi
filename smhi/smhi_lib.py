@@ -9,7 +9,7 @@ import copy
 import json
 from collections import OrderedDict
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any
 from urllib.request import urlopen
 
 import aiohttp
@@ -32,11 +32,11 @@ class SmhiForecast:
     # pylint: disable=R0913, R0902, R0914
     def __init__(
         self,
-        temperature: int,
-        temperature_max: int,
-        temperature_min: int,
+        temperature: float,
+        temperature_max: float,
+        temperature_min: float,
         humidity: int,
-        pressure: int,
+        pressure: float,
         thunder: int,
         cloudiness: int,
         precipitation: int,
@@ -68,17 +68,17 @@ class SmhiForecast:
         self._valid_time = valid_time
 
     @property
-    def temperature(self) -> int:
+    def temperature(self) -> float:
         """Air temperature (Celcius)"""
         return self._temperature
 
     @property
-    def temperature_max(self) -> int:
+    def temperature_max(self) -> float:
         """Air temperature max during the day (Celcius)"""
         return self._temperature_max
 
     @property
-    def temperature_min(self) -> int:
+    def temperature_min(self) -> float:
         """Air temperature min during the day (Celcius)"""
         return self._temperature_min
 
@@ -88,7 +88,7 @@ class SmhiForecast:
         return self._humidity
 
     @property
-    def pressure(self) -> int:
+    def pressure(self) -> float:
         """Air pressure (hPa)"""
         return self._pressure
 
@@ -188,7 +188,7 @@ class SmhiAPIBase:
     """
 
     @abc.abstractmethod
-    def get_forecast_api(self, longitude: str, latitude: str) -> Dict[str, Any]:
+    def get_forecast_api(self, longitude: str, latitude: str) -> dict[str, Any]:
         """Override this"""
         raise NotImplementedError(
             "users must define get_forecast to use this base class"
@@ -197,7 +197,7 @@ class SmhiAPIBase:
     @abc.abstractmethod
     async def async_get_forecast_api(
         self, longitude: str, latitude: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Override this"""
         raise NotImplementedError(
             "users must define get_forecast to use this base class"
@@ -214,7 +214,7 @@ class SmhiAPI(SmhiAPIBase):
         """Init the API with or without session"""
         self.session: aiohttp.ClientSession | None = session
 
-    def get_forecast_api(self, longitude: str, latitude: str) -> Dict[str, Any]:
+    def get_forecast_api(self, longitude: str, latitude: str) -> dict[str, Any]:
         """gets data from API"""
         api_url = APIURL_TEMPLATE.format(longitude, latitude)
 
@@ -226,7 +226,7 @@ class SmhiAPI(SmhiAPIBase):
 
     async def async_get_forecast_api(
         self, longitude: str, latitude: str
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """gets data from API asyncronious"""
         api_url = APIURL_TEMPLATE.format(longitude, latitude)
 
@@ -265,21 +265,21 @@ class Smhi:
         self._latitude = str(round(float(latitude), 6))
         self._api = SmhiAPI(session)
 
-    def get_forecast(self) -> List[SmhiForecast]:
+    def get_forecast(self) -> list[SmhiForecast]:
         """
         Returns a list of forecasts. The first in list are the current one
         """
         json_data = self._api.get_forecast_api(self._longitude, self._latitude)
         return _get_forecast(json_data)
 
-    def get_forecast_hour(self) -> List[SmhiForecast]:
+    def get_forecast_hour(self) -> list[SmhiForecast]:
         """
         Returns a list of forecasts by hour. The first in list are the current one
         """
         json_data = self._api.get_forecast_api(self._longitude, self._latitude)
         return _get_forecast_hour(json_data)
 
-    async def async_get_forecast(self) -> List[SmhiForecast]:
+    async def async_get_forecast(self) -> list[SmhiForecast]:
         """
         Returns a list of forecasts. The first in list are the current one
         """
@@ -288,7 +288,7 @@ class Smhi:
         )
         return _get_forecast(json_data)
 
-    async def async_get_forecast_hour(self) -> List[SmhiForecast]:
+    async def async_get_forecast_hour(self) -> list[SmhiForecast]:
         """
         Returns a list of forecasts by hour. The first in list are the current one
         """
@@ -299,8 +299,8 @@ class Smhi:
 
 
 # pylint: disable=R0914, R0912, W0212, R0915
-def _get_forecast(api_result: dict) -> List[SmhiForecast]:
-    """Converts results fråm API to SmhiForeCast list"""
+def _get_forecast(api_result: dict) -> list[SmhiForecast]:
+    """Converts results fråm API to SmhiForecast list"""
     forecasts = []
 
     # Need the ordered dict to get
@@ -312,6 +312,7 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
     # Used to calc the daycount
     day_nr = 1
 
+    forecast_day: SmhiForecast
     for day in forecasts_ordered:
         forecasts_day = forecasts_ordered[day]
 
@@ -323,17 +324,19 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
         forecast_temp_max = -100.0
         forecast_temp_min = 100.0
         forecast = None
-        for forcast_day in forecasts_day:
-            temperature = forcast_day.temperature
+        for forecast_day in forecasts_day:
+            temperature = forecast_day.temperature
             if forecast_temp_min > temperature:
                 forecast_temp_min = temperature
             if forecast_temp_max < temperature:
                 forecast_temp_max = temperature
 
-            if forcast_day.valid_time.hour == 12:
-                forecast = copy.deepcopy(forcast_day)
+            if forecast_day.valid_time.hour == 12:
+                forecast = copy.deepcopy(forecast_day)
 
-            total_precipitation = total_precipitation + forcast_day._total_precipitation
+            total_precipitation = (
+                total_precipitation + forecast_day._total_precipitation
+            )
 
         if forecast is None:
             # We passed 12 noon, set to current
@@ -349,8 +352,8 @@ def _get_forecast(api_result: dict) -> List[SmhiForecast]:
     return forecasts
 
 
-def _get_forecast_hour(api_result: dict) -> List[SmhiForecast]:
-    """Converts results fråm API to SmhiForeCast list"""
+def _get_forecast_hour(api_result: dict) -> list[SmhiForecast]:
+    """Converts results fråm API to SmhiForecast list"""
     forecasts = []
 
     # Need the ordered dict to get
@@ -359,6 +362,7 @@ def _get_forecast_hour(api_result: dict) -> List[SmhiForecast]:
 
     forecasts_ordered = _get_all_forecast_from_api(api_result)
 
+    forecast_hour: SmhiForecast
     for day in forecasts_ordered:
         for forecast_hour in forecasts_ordered[day]:
             forecast = forecast_hour
@@ -373,7 +377,7 @@ def _get_forecast_hour(api_result: dict) -> List[SmhiForecast]:
 
 
 def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
-    """Converts results fråm API to SmhiForeCast list"""
+    """Converts results fråm API to SmhiForecast list"""
     # Total time in hours since last forecast
     total_hours_last_forecast = 1.0
 
@@ -393,7 +397,7 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
             elif param["name"] == "r":
                 humidity = int(param["values"][0])  # Percent
             elif param["name"] == "msl":
-                pressure = int(param["values"][0])  # hPa
+                pressure = float(param["values"][0])  # hPa
             elif param["name"] == "tstm":
                 thunder = int(param["values"][0])  # Percent
             elif param["name"] == "tcc_mean":
@@ -417,8 +421,6 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
             elif param["name"] == "gust":
                 wind_gust = float(param["values"][0])  # wind gust speed
 
-        rounded_temp = int(round(temperature))
-
         if last_time is not None:
             total_hours_last_forecast = (valid_time - last_time).seconds / 60 / 60
 
@@ -427,9 +429,9 @@ def _get_all_forecast_from_api(api_result: dict) -> OrderedDict:
         total_precipitation = round(mean_precipitation * total_hours_last_forecast, 2)
 
         forecast = SmhiForecast(
-            rounded_temp,
-            rounded_temp,
-            rounded_temp,
+            temperature,
+            temperature,
+            temperature,
             humidity,
             pressure,
             thunder,
