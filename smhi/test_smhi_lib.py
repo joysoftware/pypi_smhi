@@ -270,7 +270,7 @@ async def test_async_error_from_api():
 # Might have to rewrite this test at some point
 
 # def test_precipitation_mean_value(smhi):
-#     """Test average precipitation calulation.
+#     """Test average precipitation calculation.
 
 #     Average for the forecast is calculated the average
 #     for the whole day.

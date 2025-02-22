@@ -69,17 +69,17 @@ class SmhiForecast:
 
     @property
     def temperature(self) -> float:
-        """Air temperature (Celcius)"""
+        """Air temperature (Celsius)"""
         return self._temperature
 
     @property
     def temperature_max(self) -> float:
-        """Air temperature max during the day (Celcius)"""
+        """Air temperature max during the day (Celsius)"""
         return self._temperature_max
 
     @property
     def temperature_min(self) -> float:
-        """Air temperature min during the day (Celcius)"""
+        """Air temperature min during the day (Celsius)"""
         return self._temperature_min
 
     @property
@@ -183,7 +183,7 @@ class SmhiForecast:
 
 class SmhiAPIBase:
     """
-    Baseclass to use as dependecy incjection pattern for easier
+    Baseclass to use as dependency incjection pattern for easier
     automatic testing
     """
 
